@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
@@ -18,7 +18,7 @@ export class RegionService {
   * Método para obtener las regiones desde la API.
   * @returns Observable que emite la lista de regiones.
   */
- fetchRegions(): Observable<any> {
+ fetchRegions(page: number, size: number, sortColumn: string, sortDirection: string): Observable<any> {
    const token = this.authService.getToken(); // Obtén el token del AuthService
 
 
@@ -27,12 +27,17 @@ export class RegionService {
      return throwError(() => new Error('Unauthorized'));
    }
 
+   const params = new HttpParams()
+    .set('page', page.toString())
+    .set('size', size.toString())
+    .set('sort', `${sortColumn},${sortDirection}`);
 
    // Realiza la solicitud GET al endpoint de regiones con el token en el encabezado.
    return this.http.get(`${environment.apiUrl}/regions`, {
      headers: new HttpHeaders({
        Authorization: `Bearer ${token}`,
      }),
+     params: params
    });
  }
 }
