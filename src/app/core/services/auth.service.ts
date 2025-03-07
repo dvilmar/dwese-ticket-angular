@@ -3,7 +3,11 @@ import { environment } from '../../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, throwError, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
+import { NotificationService } from './notification.service';
+import { response } from 'express';
+import { jwtDecode } from 'jwt-decode';
+
 
 
 @Injectable({
@@ -14,7 +18,7 @@ export class AuthService {
  // BehaviorSubject almacena el token y permite a otros componentes reaccionar cuando cambia.
 
 
- constructor(private http: HttpClient, private router: Router) {}
+ constructor(private http: HttpClient, private router: Router, private notificationService: NotificationService) {}
 
 
  /**
@@ -28,6 +32,13 @@ export class AuthService {
      `${environment.apiUrl}/v1/authenticate`,
      { username, password },
      { headers: new HttpHeaders({ 'Content-Type': 'application/json' }) }
+   ).pipe(
+    tap(response => {
+      this.setToken(response.token);
+      console.log('Login exitoso, conectado a WebSockets...');
+
+      this.notificationService.connect();
+    })
    );
  }
 
@@ -66,6 +77,20 @@ export class AuthService {
   */
  logout(): void {
    this.token.next(null); // Limpia el token almacenado.
+   this.notificationService.disconnect();
    this.router.navigate(['/']); // Redirige al usuario a la ruta raíz.
+ }
+
+ getUsername(): string | null {
+  const token = this.getToken();
+  if (!token) return null;
+
+  try {
+    const decodedToken: any = jwtDecode(token);
+    return decodedToken.sub || null;
+  } catch (error) {
+    console.error('Error al decodificar el token', error);
+    return null;
+  }
  }
 }

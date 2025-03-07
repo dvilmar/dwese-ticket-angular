@@ -3,10 +3,11 @@ import { AuthService } from '../../core/services/auth.service';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
+import { NotificationsComponent } from '../../shared/notifications/notifications.component';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, NotificationsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
