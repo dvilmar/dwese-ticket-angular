@@ -5,6 +5,7 @@ import { authGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './features/home/home.component';
 import { ForbiddenComponent } from './features/forbidden/forbidden.component';
 import { Error404Component } from './features/error404/error404.component';
+import { TiempoComponent } from './features/tiempo/tiempo.component';
 
 export const routes: Routes = [
     {
@@ -23,6 +24,10 @@ export const routes: Routes = [
     {
         path: 'forbidden',
         component: ForbiddenComponent,
+    },
+    {
+        path: 'el-tiempo',
+        component: TiempoComponent,
     },
     {
         path: '**',
